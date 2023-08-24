@@ -11,7 +11,11 @@ describe('ProductsService', function () {
 
   it('Ao enviar um comando para novo cadastro, testa se um novo produto é criado', async function () {
 
-    const mockedProduct = ProductModel.build({ name: 'Martelo da Barbie', price: '100', orderId: 4 });
+    const mockObj = {
+      name: 'Martelo da Barbie', price: '100', orderId: 4
+    }
+
+    const mockedProduct = ProductModel.build(mockObj);
 
     sinon.stub(ProductModel, 'create').resolves(mockedProduct);
 

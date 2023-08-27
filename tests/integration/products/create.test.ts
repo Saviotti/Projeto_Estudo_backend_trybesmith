@@ -19,7 +19,8 @@ describe('ProductsService', function () {
 
     sinon.stub(ProductModel, 'create').resolves(mockedProduct);
 
-    const response = await chai.request(app).post('/products').send({ name: 'Martelo da Barbie', price: '100', orderId: 4 });
+    const response = await chai.request(app).post('/products').
+    send({ name: 'Martelo da Barbie', price: '100', orderId: 4 });
 
     expect(response).to.have.status(201);
   });

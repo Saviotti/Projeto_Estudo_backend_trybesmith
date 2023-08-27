@@ -1,5 +1,5 @@
 export type Order = {
-  id: 'number';
-  userId: 'number';
-  productId?: 'number';
+  id: number;
+  userId: number;
+  productId?: number;
 };

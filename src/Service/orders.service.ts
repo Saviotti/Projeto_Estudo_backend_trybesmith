@@ -17,6 +17,14 @@ const getAll = async (): Promise<ServiceResponse<object>> => {
   return { status: 'SUCCESSFULL', data: mapIdOrders };
 };
 
+const create = async (userId: number, productIds: number[]): Promise <void | any> => {
+  const newOrder = await OrderModel.create({ userId });
+  const updProducts = productIds.map((prodId) => ProductModel.update({
+    orderId: newOrder.dataValues.id }, { where: { id: prodId } }));
+  await Promise.all(updProducts);
+};
+
 export default {
   getAll,
+  create,
 };

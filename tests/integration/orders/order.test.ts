@@ -3,8 +3,7 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import OrderModel from '../../../src/database/models/order.model';
 import app from '../../../src/app';
-import { request } from 'http';
-// import request from 'supertest'
+import ProductModel from '../../../src/database/models/product.model';
 
 chai.use(chaiHttp);
 const {expect} = chai;
@@ -12,15 +11,46 @@ const {expect} = chai;
 describe('Testes do endpoint /orders', function () { 
   beforeEach(function () { sinon.restore(); });
 
-  it('Testa se traz as ordens com o getAll', async function () {
-    const findAllSinonStub = sinon.stub(OrderModel, 'findAll');
-    findAllSinonStub.resolves([]);
+  it('Testa retorno de getAll com mock', async function () {
+    const allOrders = [
+      { id: 1, userId: 1, productIds: [ 1, 2 ] },
+      { id: 2, userId: 3, productIds: [ 3, 4 ] },
+      { id: 3, userId: 2, productIds: [ 5 ] }
+    ];
 
-    const response = await chai.request(app).get('/orders');
+    const orderProductIds = [
+      [{ id: 1}, { id: 2}],
+      [{ id: 3}, { id: 4}],
+      [{ id: 5}]
+    ];
 
-    expect(response).to.have.status(200);
-    expect(response.body).to.be.deep.equal([]);
+    const getOrdersFromDB = [
+      {
+        id: 1,
+        userId: 1,
+      },
+      {
+        id: 2,
+        userId: 3,
+      },
+      {
+        id: 3,
+        userId: 2,
+      }
+    ];
+
+    const mockFindAllReturn = getOrdersFromDB.map((order) => OrderModel.build(order));
+    mockFindAllReturn.forEach((order, i) => order.dataValues.productIds = orderProductIds[i]);
+
+    sinon.stub(OrderModel, 'findAll').resolves(mockFindAllReturn);
+
+    const httpResponse = await chai.request(app).get('/orders');
+    
+
+    expect(httpResponse.status).to.equal(200);
+    expect(httpResponse.body).to.be.deep.equal(allOrders);
   });
+
   it('Testa resposta sem um token', async function async () {
     const mock = { productsId: [1, 2] };
 

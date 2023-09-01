@@ -11,7 +11,7 @@ const tokenValidation = (req: Request, res: Response, next: NextFunction): unkno
   const token = authorization.split(' ')[1];
   try {
     jwt.verify(token, jwtsecret || 'secret');
-    next();
+    return next();
   } catch (error) {
     return res.status(401).json({ message: 'Invalid token' });
   }

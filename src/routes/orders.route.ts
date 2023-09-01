@@ -7,4 +7,5 @@ import userValidation from '../Middlewares/user.validation';
 const orderRouter = Router();
 orderRouter.get('/', ordersController.getAll);
 orderRouter.post('/', tokenValidation, userValidation, productsValidation, ordersController.create);
+
 export default orderRouter;

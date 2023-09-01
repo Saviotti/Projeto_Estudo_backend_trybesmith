@@ -84,11 +84,31 @@ describe('validações em products', async function () {
         expect(result.status).to.equal(401);
         expect(result.body.message).to.be.deep.equal('Token not found');
     });
-    // it('Testa se o userId é um usuário existente', async function () {
-    //     const mock = { userId: 99, productIds: 6 }
-    //     const result = await chai.request(app).post('/orders').send(mock).set('Authorization', `Bearer ${token}`);
+    it('Testa se o userId é um usuário existente', async function () {
+        const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJIYWdhciIsImlhdCI6MTY5MzU5OTY3N30.pHID9a9Je9CHv8rOd62-1YmewUKWTDtQkwaDay2sKEY';
 
-    //     expect(result.status).to.equal(404);
-    //     expect(result.body.message).to.be.deep.equal('"userId" not found');
-    // });
+        const mock = { userId: '', productIds: [1] }
+        const result = await chai.request(app).post('/orders').send(mock).set('Authorization', token);
+
+        expect(result.status).to.equal(400);
+        expect(result.body.message).to.be.deep.equal('"userId" is required');
+    });
+    it('Testa a resposta do userId se não for do tipo number', async function () {
+        const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJIYWdhciIsImlhdCI6MTY5MzU5OTY3N30.pHID9a9Je9CHv8rOd62-1YmewUKWTDtQkwaDay2sKEY';
+
+        const mock = { userId: 'string', productIds: [1] }
+        const result = await chai.request(app).post('/orders').send(mock).set('Authorization', token);
+
+        expect(result.status).to.equal(422);
+        expect(result.body.message).to.be.deep.equal('\"userId\" must be a number');
+    });
+    it('Testa a resposta do userId quando não é uma pessoa usuária válida', async function () {
+        const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJIYWdhciIsImlhdCI6MTY5MzU5OTY3N30.pHID9a9Je9CHv8rOd62-1YmewUKWTDtQkwaDay2sKEY';
+
+        const mock = { userId: 10, productIds: [1, 2] };
+        const result = await chai.request(app).post('/orders').send(mock).set('Authorization', token);
+
+        expect(result.status).to.equal(404);
+        expect(result.body.message).to.be.deep.equal('"userId" not found');
+    });
 })

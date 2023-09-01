@@ -4,6 +4,7 @@ import chaiHttp from 'chai-http';
 import OrderModel from '../../../src/database/models/order.model';
 import app from '../../../src/app';
 import ProductModel from '../../../src/database/models/product.model';
+import { build } from 'joi';
 
 chai.use(chaiHttp);
 const {expect} = chai;
@@ -66,5 +67,26 @@ describe('Testes do endpoint /orders', function () {
 
     expect(result.status).to.equal(401);
     expect(result.body.message).to.be.deep.equal('Invalid token');
+  });
+
+  it('Testa resposta ao retorno da função create de service', async function () {
+    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJIYWdhciIsImlhdCI6MTY5MzU5OTY3N30.pHID9a9Je9CHv8rOd62-1YmewUKWTDtQkwaDay2sKEY';
+
+    const dataBuild = OrderModel.build({ id: 5, userId: 1 });
+    const mockResult = {
+      userId: 1,
+      productIds: [
+        1,
+        2
+      ]
+    }
+    const mockUserId = { userId: 1, productIds: [1, 2] }
+  
+    sinon.stub(OrderModel, 'create').resolves(dataBuild);
+
+    const response = await chai.request(app).post('/orders').send(mockUserId).set('Authorization', token);
+
+    expect(response.body).to.be.deep.equal(mockResult);
+    expect(response.status).to.equal(201);
   });
 });

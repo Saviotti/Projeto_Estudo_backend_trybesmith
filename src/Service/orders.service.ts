@@ -22,8 +22,6 @@ const create = async (userId: number, productIds: number[]): Promise<unknown> =>
   const updProducts = productIds.map((prodId) => ProductModel.update({
     orderId: newOrder.dataValues.id }, { where: { id: prodId } }));
   await Promise.all(updProducts);
-  console.log(updProducts, 'Produtos atualizados ==>>>');
-  console.log(newOrder, 'New Order ===>');
   
   return { userId, productIds };
 };

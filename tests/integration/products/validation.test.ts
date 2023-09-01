@@ -8,9 +8,6 @@ const {expect} = chai;
 
 describe('validações em products', async function () {
     beforeEach(function () { sinon.restore(); });
-    // let token: string;
-    // const result = await chai.request(app).post('/login').send({ username: 'Hagar', password: 'terrível' });
-    // token = result.body.token;
     it('Testa validação de produto sem nome', async function () {
 
         const mock = { name: '', price: '100' }
@@ -110,5 +107,32 @@ describe('validações em products', async function () {
 
         expect(result.status).to.equal(404);
         expect(result.body.message).to.be.deep.equal('"userId" not found');
+    });
+    it('Testa a resposta do productsId quando não há produto no corpo da requisição', async function () {
+        const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJIYWdhciIsImlhdCI6MTY5MzU5OTY3N30.pHID9a9Je9CHv8rOd62-1YmewUKWTDtQkwaDay2sKEY';
+
+        const mock = { userId: 1 };
+        const result = await chai.request(app).post('/orders').send(mock).set('Authorization', token);
+
+        expect(result.status).to.equal(400);
+        expect(result.body.message).to.be.deep.equal('"productIds" is required');
+    });
+    it('Testa a resposta do productsId quando o corpo da requisição de products não for um array', async function () {
+        const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJIYWdhciIsImlhdCI6MTY5MzU5OTY3N30.pHID9a9Je9CHv8rOd62-1YmewUKWTDtQkwaDay2sKEY';
+
+        const mock = { userId: 1, productIds: {} };
+        const result = await chai.request(app).post('/orders').send(mock).set('Authorization', token);
+
+        expect(result.status).to.equal(422);
+        expect(result.body.message).to.be.deep.equal('"productIds" must be an array');
+    });
+    it('Testa a resposta do productsId quando o corpo da requisição for um array vazio', async function () {
+        const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJIYWdhciIsImlhdCI6MTY5MzU5OTY3N30.pHID9a9Je9CHv8rOd62-1YmewUKWTDtQkwaDay2sKEY';
+
+        const mock = { userId: 1, productIds: [] };
+        const result = await chai.request(app).post('/orders').send(mock).set('Authorization', token);
+
+        expect(result.status).to.equal(422);
+        expect(result.body.message).to.be.deep.equal('"productIds" must include only numbers');
     });
 })

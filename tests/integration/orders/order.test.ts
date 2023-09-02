@@ -3,6 +3,8 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import OrderModel from '../../../src/database/models/order.model';
 import app from '../../../src/app';
+import UserModel from '../../../src/database/models/user.model';
+import ProductModel from '../../../src/database/models/product.model';
 
 chai.use(chaiHttp);
 const {expect} = chai;
@@ -78,9 +80,12 @@ describe('Testes do endpoint /orders', function () {
         2
       ]
     }
+
     const mockUserId = { userId: 1, productIds: [1, 2] }
   
     sinon.stub(OrderModel, 'create').resolves(dataBuild);
+    sinon.stub(UserModel, 'findOne').resolves(true as any);
+    sinon.stub(ProductModel, 'update').resolves(true as any);
 
     const response = await chai.request(app).post('/orders').send(mockUserId).set('Authorization', token);
 

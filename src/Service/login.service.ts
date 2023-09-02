@@ -20,7 +20,7 @@ const nameAndPasswordValidation = (user: UserType): ResponseType | null => {
 
 const userAuth = async (username: string, password: string): Promise<UserSequelizeModel | null> => {
   const user = await UserModel.findOne({ where: { username } });
-  if (user && bcrypt.compareSync(password, user.get('password') as string)) {
+  if (user && bcrypt.compareSync(password, user.dataValues.password)) {
     return user;
   }
   return null;
@@ -36,7 +36,7 @@ const getUser = async (user: UserType): Promise<ResponseType> => {
   }
 
   const token = jwt.sign({
-    id: authenticatedUser.get('id') as number,
+    id: authenticatedUser.dataValues.id,
     username: user.username,
   }, SECRET);
 

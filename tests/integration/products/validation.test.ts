@@ -2,6 +2,7 @@ import sinon from 'sinon';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../../src/app';
+import UserModel from '../../../src/database/models/user.model';
 
 chai.use(chaiHttp);
 const {expect} = chai;
@@ -68,6 +69,7 @@ describe('validações em products', async function () {
     it('Testa respostas se não tiver o userID', async function () {
 
         const mock = { userId: '', productIds: [1, 2] }
+        // sinon.stub(UserModel, 'findOne').resolves(true as any);
         const result = await chai.request(app).post('/orders').send(mock);
 
         expect(result.status).to.equal(401);
@@ -85,6 +87,7 @@ describe('validações em products', async function () {
         const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJIYWdhciIsImlhdCI6MTY5MzU5OTY3N30.pHID9a9Je9CHv8rOd62-1YmewUKWTDtQkwaDay2sKEY';
 
         const mock = { userId: '', productIds: [1] }
+        sinon.stub(UserModel, 'findOne').resolves(true as any);
         const result = await chai.request(app).post('/orders').send(mock).set('Authorization', token);
 
         expect(result.status).to.equal(400);
@@ -103,6 +106,7 @@ describe('validações em products', async function () {
         const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJIYWdhciIsImlhdCI6MTY5MzU5OTY3N30.pHID9a9Je9CHv8rOd62-1YmewUKWTDtQkwaDay2sKEY';
 
         const mock = { userId: 10, productIds: [1, 2] };
+        sinon.stub(UserModel, 'findOne').resolves(null);
         const result = await chai.request(app).post('/orders').send(mock).set('Authorization', token);
 
         expect(result.status).to.equal(404);
@@ -112,6 +116,7 @@ describe('validações em products', async function () {
         const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJIYWdhciIsImlhdCI6MTY5MzU5OTY3N30.pHID9a9Je9CHv8rOd62-1YmewUKWTDtQkwaDay2sKEY';
 
         const mock = { userId: 1 };
+        sinon.stub(UserModel, 'findOne').resolves(true as any);
         const result = await chai.request(app).post('/orders').send(mock).set('Authorization', token);
 
         expect(result.status).to.equal(400);
@@ -121,6 +126,7 @@ describe('validações em products', async function () {
         const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJIYWdhciIsImlhdCI6MTY5MzU5OTY3N30.pHID9a9Je9CHv8rOd62-1YmewUKWTDtQkwaDay2sKEY';
 
         const mock = { userId: 1, productIds: {} };
+        sinon.stub(UserModel, 'findOne').resolves(true as any);
         const result = await chai.request(app).post('/orders').send(mock).set('Authorization', token);
 
         expect(result.status).to.equal(422);
@@ -130,6 +136,7 @@ describe('validações em products', async function () {
         const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJIYWdhciIsImlhdCI6MTY5MzU5OTY3N30.pHID9a9Je9CHv8rOd62-1YmewUKWTDtQkwaDay2sKEY';
 
         const mock = { userId: 1, productIds: [] };
+        sinon.stub(UserModel, 'findOne').resolves(true as any);
         const result = await chai.request(app).post('/orders').send(mock).set('Authorization', token);
 
         expect(result.status).to.equal(422);

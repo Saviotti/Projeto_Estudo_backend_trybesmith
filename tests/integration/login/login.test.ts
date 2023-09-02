@@ -53,30 +53,12 @@ describe('Teste do endpoint /login', function () {
     expect(result.body.message).to.be.deep.equal('Username or password invalid');
   });
   it('Testa status quando password e username são válidos', async function () {
-    // const mock = {
-    //     username: 'Hagar',
-    //     password: 'terrível'
-    //   }
-
-    // const mockBuild = {
-    //   id: 1,
-    //   username: 'Hagar',
-    //   password: 'terrível',
-    //   vocation: 'Guerreiro',
-    //   level: 10
-    // };
-
-    // const build = UserModel.build(mockBuild);
-    // sinon.stub(UserModel, 'findOne').resolves(build);
-    
-    // const result = await chai.request(app).post('/login').send(mock);
-
-    // expect(result.status).to.equal(200);
-    // expect(result.body).to.haveOwnProperty('token');
     const mock = {
       username: 'Hagar',
       password: 'terrível'
-    }
+   }
+  sinon.stub(UserModel, 'findOne').resolves({ dataValues: { password: '$2a$10$.w9B4IXZBxZ6VD7M4Dwu3u68GSNyn3wYtM9EHkh7Ap/JGV4tDTyq2', username: 'Hagar' }} as any);
+
   const result = await chai.request(app).post('/login').send(mock);
 
   expect(result.status).to.equal(200);

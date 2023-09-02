@@ -2,6 +2,7 @@ import sinon from 'sinon';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../../src/app';
+import UserModel from '../../../src/database/models/user.model';
 
 chai.use(chaiHttp);
 
@@ -11,7 +12,8 @@ describe('Teste do endpoint /login', function () {
     const mock = {
         username: '',
         password: 'terrível'
-      }
+    };
+
     const result = await chai.request(app).post('/login').send(mock);
 
     expect(result.status).to.equal(400);
@@ -32,6 +34,7 @@ describe('Teste do endpoint /login', function () {
         username: 'invalid-username',
         password: 'terrível'
       }
+    sinon.stub(UserModel, 'findOne').resolves(undefined);
     const result = await chai.request(app).post('/login').send(mock);
 
     expect(result.status).to.equal(401);
@@ -42,18 +45,40 @@ describe('Teste do endpoint /login', function () {
         username: 'Hagar',
         password: 'invalid-password'
       }
+    sinon.stub(UserModel, 'findOne').resolves(undefined);
+    
     const result = await chai.request(app).post('/login').send(mock);
 
     expect(result.status).to.equal(401);
     expect(result.body.message).to.be.deep.equal('Username or password invalid');
   });
   it('Testa status quando password e username são válidos', async function () {
-    const mock = {
-        username: 'Hagar',
-        password: 'terrível'
-      }
-    const result = await chai.request(app).post('/login').send(mock);
+    // const mock = {
+    //     username: 'Hagar',
+    //     password: 'terrível'
+    //   }
 
-    expect(result.status).to.equal(200);
+    // const mockBuild = {
+    //   id: 1,
+    //   username: 'Hagar',
+    //   password: 'terrível',
+    //   vocation: 'Guerreiro',
+    //   level: 10
+    // };
+
+    // const build = UserModel.build(mockBuild);
+    // sinon.stub(UserModel, 'findOne').resolves(build);
+    
+    // const result = await chai.request(app).post('/login').send(mock);
+
+    // expect(result.status).to.equal(200);
+    // expect(result.body).to.haveOwnProperty('token');
+    const mock = {
+      username: 'Hagar',
+      password: 'terrível'
+    }
+  const result = await chai.request(app).post('/login').send(mock);
+
+  expect(result.status).to.equal(200);
   });
 });

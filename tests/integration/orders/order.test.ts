@@ -3,8 +3,6 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import OrderModel from '../../../src/database/models/order.model';
 import app from '../../../src/app';
-import ProductModel from '../../../src/database/models/product.model';
-import { build } from 'joi';
 
 chai.use(chaiHttp);
 const {expect} = chai;
